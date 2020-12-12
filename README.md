@@ -1,3 +1,6 @@
+![CI](https://github.com/satoren/ts-py-struct/workflows/CI/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/satoren/ts-py-struct/badge.svg?branch=main)](https://coveralls.io/github/satoren/ts-py-struct?branch=main)
+
 # ts-py-struct
 
 port python's struct to typescript.
