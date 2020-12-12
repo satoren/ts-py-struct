@@ -1,6 +1,6 @@
 {
   "name": "ts-py-struct",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -12,7 +12,9 @@
     "fix": "run-s fix:eslint fix:prettier",
     "fix:eslint": "yarn lint:eslint --fix",
     "fix:prettier": "yarn lint:prettier --write",
-    "test-ci": "jest --coverage"
+    "test-ci": "jest --coverage",
+    "clean": "rm -Rf ./dist",
+    "prepack": "run-s clean build"
   },
   "author": "",
   "license": "ISC",
