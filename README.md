@@ -29,15 +29,3 @@ const s = new Struct('2c')
 const packed = s.pack('A', '0')
 const unpacked = s.unpack(packed) // unpacked type is [string, string]
 ```
-
-### Implementation limitations
-
-- The maximum number of Repeat count is 999 for type collection now.
-
-```ts
-// Issue
-const a = unpack('1000i', buffer) //  a is `never` because Cannot infer type.
-
-// Workaround. Disable infer type by format.
-const a = unpack('1000i' as string, buffer) // a is (string | number | boolean | Uint8Array | BigInt)[].
-```

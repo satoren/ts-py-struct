@@ -1,4 +1,4 @@
-import { Repeat } from './repeat'
+import { RepeatA } from './repeat'
 
 type OrderType = '<' | '>' | '!' | '@' | '=' | ''
 
@@ -22,6 +22,8 @@ export type RepeatableFormatChar =
   | 'P'
 export type LengthFormatChar = 'x' | 's'
 
+export type FormatChar = RepeatableFormatChar | LengthFormatChar
+
 type TokenCharTypeMap = {
   s: Uint8Array
   p: string
@@ -44,64 +46,65 @@ type TokenCharTypeMap = {
   d: number
   P: BigInt
 }
-type TokenType = TokenCharTypeMap[RepeatableFormatChar | LengthFormatChar]
+type TokenType = TokenCharTypeMap[FormatChar]
 
-type RepeatDigit = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | ''}`
-type RepeatCount = Exclude<
-  `${RepeatDigit}${RepeatDigit}${RepeatDigit}`,
-  `0${string}`
->
+type Digit = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
+type Char = Digit | FormatChar
 
-type LengthFormatToken = `${RepeatCount}${LengthFormatChar}`
-type RepeatableFormatToken = `${RepeatCount}${RepeatableFormatChar}`
-type FormatToken = LengthFormatToken | RepeatableFormatToken
+type Tail<T extends string> = T extends `${Char}${infer U}` ? U : never
+type First<T extends string> = T extends `${infer U}${Tail<T>}` ? U : never
 
-type NromalizeRepeatCount<T extends string> = T extends '' ? '1' : T
+type NormalizeCountDigits<CountDigits extends string[]> = CountDigits extends []
+  ? ['1']
+  : CountDigits
 
-type LengthTokenTypeTuple<
-  T extends LengthFormatChar
-> = TokenCharTypeMap[T] extends never ? [] : [TokenCharTypeMap[T]]
-type RepeatableTokenTypeTuple<
-  T extends RepeatableFormatChar,
-  Count extends string
-> = Repeat<TokenCharTypeMap[T], NromalizeRepeatCount<Count>>
+type ToTypeTuple<
+  T extends FormatChar,
+  CountDigits extends string[]
+> = T extends LengthFormatChar
+  ? TokenCharTypeMap[T] extends never
+    ? []
+    : [TokenCharTypeMap[T]]
+  : T extends RepeatableFormatChar
+  ? RepeatA<TokenCharTypeMap[T], NormalizeCountDigits<CountDigits>>
+  : never
 
-type TokenTypeTuple<
-  T extends FormatToken
-> = T extends `${RepeatCount}${infer TokenChar}`
-  ? TokenChar extends LengthFormatChar
-    ? LengthTokenTypeTuple<TokenChar>
-    : TokenChar extends RepeatableFormatChar
-    ? T extends `${infer Count}${TokenChar}`
-      ? RepeatableTokenTypeTuple<TokenChar, Count>
-      : never
+type ParseTokenSub<
+  T extends string,
+  CountDigitsHolder extends string[] = []
+> = T extends ''
+  ? []
+  : First<T> extends infer D
+  ? D extends Digit
+    ? ParseTokenSub<Tail<T>, [...CountDigitsHolder, D]>
+    : D extends FormatChar
+    ? { type: ToTypeTuple<D, CountDigitsHolder>; next: ParseTokenSub<Tail<T>> }
     : never
   : never
 
-type TailToken<T extends string> = T extends `${FormatToken}${infer U}`
-  ? U
-  : never
-type FirstToken<T extends string> = T extends `${infer U}${TailToken<T>}`
-  ? U
-  : never
+type Flatten<T> = T extends { type: infer TYPES }
+  ? TYPES extends unknown[]
+    ? T extends { next: infer U }
+      ? [...TYPES, ...Flatten<Flatten2<U>>]
+      : [...TYPES]
+    : []
+  : []
 
-type FormatTokenTupleImpl<T extends string> = T extends ''
-  ? []
-  : [...TokenTypeTuple<FirstToken<T>>, ...FormatTokenTupleImpl<TailToken<T>>]
+type Flatten2<T> = T extends {
+  type: infer TYPES
+  next: { type: infer TYPES2; next: infer U }
+}
+  ? TYPES extends unknown[]
+    ? TYPES2 extends unknown[]
+      ? { type: [...TYPES, ...TYPES2]; next: Flatten2<U> }
+      : T
+    : T
+  : T
 
-type FormatSplitImpl<T extends string> = T extends ''
-  ? []
-  : [FirstToken<T>, ...FormatSplitImpl<TailToken<T>>]
+type ParseToken<T extends string> = Flatten<ParseTokenSub<T>>
 
 export type FormatTokenTuple<T extends string> = string extends T
   ? TokenType[]
   : T extends `${OrderType}${infer U}`
-  ? FormatTokenTupleImpl<U> extends infer R
-    ? R
-    : TokenType[]
-  : TokenType[]
-export type FormatSplit<T extends string> = T extends `${OrderType}${infer U}`
-  ? FormatSplitImpl<U> extends infer R
-    ? R
-    : TokenType[]
-  : TokenType[]
+  ? ParseToken<U>
+  : never
