@@ -53,7 +53,6 @@ export const packer = <T extends string>(format: T): Packer<T> => {
       }
     }
     tokens.forEach((token) => {
-      // TODO
       switch (token.token) {
         case '?': {
           for (let i = 0; i < token.count; i++) {

@@ -194,7 +194,7 @@ test('pack compare with python with native', () => {
   )
 
   const a = toArray(stdout.toString('utf-8').trim())
-  expect(pack(format, 1, 2, 3)).toStrictEqual(a)
+  expect(pack(format, 1, 2, BigInt(3))).toStrictEqual(a)
 })
 type PackableType = number | Uint8Array | boolean | BigInt
 const toPythonArgString = (...args: PackableType[]): string => {

@@ -24,10 +24,10 @@ export type LengthFormatChar = 'x' | 's'
 
 export type FormatChar = RepeatableFormatChar | LengthFormatChar
 
-type TokenCharTypeMap = {
+type StandardTokenCharTypeMap = {
   s: Uint8Array
   p: string
-  x: never
+  x: void
   c: string
   b: number
   B: number
@@ -38,15 +38,39 @@ type TokenCharTypeMap = {
   I: number
   l: number
   L: number
-  n: number
-  N: number
-  q: BigInt
-  Q: BigInt
+  n: never
+  N: never
+  q: bigint
+  Q: bigint
   f: number
   d: number
-  P: BigInt
+  P: never
 }
-type TokenType = TokenCharTypeMap[FormatChar]
+
+type NativeTokenCharTypeMap = {
+  s: Uint8Array
+  p: string
+  x: void
+  c: string
+  b: number
+  B: number
+  '?': boolean
+  h: number
+  H: number
+  i: number
+  I: number
+  l: bigint
+  L: bigint
+  n: bigint
+  N: bigint
+  q: bigint
+  Q: bigint
+  f: number
+  d: number
+  P: bigint
+}
+
+type TokenType = StandardTokenCharTypeMap[FormatChar]
 
 type Digit = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
 type Char = Digit | FormatChar
@@ -58,27 +82,47 @@ type NormalizeCountDigits<CountDigits extends string[]> = CountDigits extends []
   ? ['1']
   : CountDigits
 
+type ChooseTypeTuple<
+  T extends FormatChar,
+  StandardSize extends boolean
+> = StandardSize extends true
+  ? StandardTokenCharTypeMap[T] extends void
+    ? []
+    : [StandardTokenCharTypeMap[T]]
+  : NativeTokenCharTypeMap[T] extends void
+  ? []
+  : [NativeTokenCharTypeMap[T]]
+type ChooseType<
+  T extends FormatChar,
+  StandardSize extends boolean
+> = StandardSize extends true
+  ? StandardTokenCharTypeMap[T]
+  : NativeTokenCharTypeMap[T]
+
 type ToTypeTuple<
   T extends FormatChar,
-  CountDigits extends string[]
+  CountDigits extends string[],
+  StandardSize extends boolean
 > = T extends LengthFormatChar
-  ? TokenCharTypeMap[T] extends never
-    ? []
-    : [TokenCharTypeMap[T]]
+  ? ChooseTypeTuple<T, StandardSize>
   : T extends RepeatableFormatChar
-  ? RepeatA<TokenCharTypeMap[T], NormalizeCountDigits<CountDigits>>
+  ? RepeatA<ChooseType<T, StandardSize>, NormalizeCountDigits<CountDigits>>
   : never
 
 type ParseTokenSub<
   T extends string,
+  StandardSize extends boolean,
   CountDigitsHolder extends string[] = []
 > = T extends ''
   ? []
   : First<T> extends infer D
   ? D extends Digit
-    ? ParseTokenSub<Tail<T>, [...CountDigitsHolder, D]>
+    ? ParseTokenSub<Tail<T>, StandardSize, [...CountDigitsHolder, D]>
     : D extends FormatChar
-    ? { type: ToTypeTuple<D, CountDigitsHolder>; next: ParseTokenSub<Tail<T>> }
+    ? {
+        type: ToTypeTuple<D, CountDigitsHolder, StandardSize>
+        next: ParseTokenSub<Tail<T>, StandardSize>
+      }
     : never
   : never
 
@@ -101,10 +145,20 @@ type Flatten2<T> = T extends {
     : T
   : T
 
-type ParseToken<T extends string> = Flatten<ParseTokenSub<T>>
+type ParseToken<T extends string, StandardSize extends boolean> = Flatten<
+  ParseTokenSub<T, StandardSize>
+>
+
+type IsStandardTypeFormat<T extends string> = T extends `${
+  | '<'
+  | '>'
+  | '!'
+  | '='}${string}`
+  ? true
+  : false
 
 export type FormatTokenTuple<T extends string> = string extends T
   ? TokenType[]
   : T extends `${OrderType}${infer U}`
-  ? ParseToken<U>
+  ? ParseToken<U, IsStandardTypeFormat<T>>
   : never
