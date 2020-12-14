@@ -1,4 +1,5 @@
 ![CI](https://github.com/satoren/ts-py-struct/workflows/CI/badge.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea8562a4339243b68d9a3143db29fd4f)](https://app.codacy.com/gh/satoren/ts-py-struct?utm_source=github.com&utm_medium=referral&utm_content=satoren/ts-py-struct&utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/satoren/ts-py-struct/badge.svg?branch=main)](https://coveralls.io/github/satoren/ts-py-struct?branch=main)
 
 # ts-py-struct
