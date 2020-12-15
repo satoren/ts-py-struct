@@ -3,6 +3,7 @@ module.exports = {
   testMatch: [
     '**/__tests__/**/?(*.)+(spec|test).+(ts|tsx|js)',
     '**/?(*.)+(spec|test).+(ts|tsx|js)',
+    '!**/dist/**/*',
   ],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',

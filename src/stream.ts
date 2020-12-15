@@ -1,6 +1,13 @@
 class StreamPosition {
   protected offset = 0
 
+  protected dataView: DataView
+  protected le: boolean
+  constructor(buffer: Uint8Array, offset: number, le: boolean) {
+    this.dataView = new DataView(buffer.buffer, buffer.byteOffset + offset)
+    this.le = le
+  }
+
   aligngment(size: number) {
     const { offset } = this
     this.offset += (size - (offset % size)) % size
@@ -10,14 +17,7 @@ class StreamPosition {
   }
 }
 export class WriteDataViewStream extends StreamPosition {
-  private dataView: DataView
-  private le: boolean
-  constructor(buffer: Uint8Array, offset: number, le: boolean) {
-    super()
-    this.dataView = new DataView(buffer.buffer, buffer.byteOffset + offset)
-    this.le = le
-  }
-  writeSInt(value: number | BigInt, size: number): void {
+  writeSInt(value: number | bigint, size: number): void {
     const { offset, dataView, le } = this
     this.offset += size
     switch (size) {
@@ -32,11 +32,9 @@ export class WriteDataViewStream extends StreamPosition {
     }
   }
   writeUInt8(value: number): void {
-    const { offset, dataView } = this
-    this.offset += 1
-    return dataView.setUint8(offset, value)
+    return this.writeUInt(value, 1)
   }
-  writeUInt(value: number | BigInt, size: number): void {
+  writeUInt(value: number | bigint, size: number): void {
     const { offset, dataView, le } = this
     this.offset += size
     switch (size) {
@@ -63,14 +61,7 @@ export class WriteDataViewStream extends StreamPosition {
 }
 
 export class ReadDataViewStream extends StreamPosition {
-  private dataView: DataView
-  private le: boolean
-  constructor(buffer: Uint8Array, offset: number, le: boolean) {
-    super()
-    this.dataView = new DataView(buffer.buffer, buffer.byteOffset + offset)
-    this.le = le
-  }
-  readSInt<S extends number>(size: S): number | BigInt {
+  readSInt<S extends number>(size: S): number | bigint {
     const { offset, dataView, le } = this
     this.offset += size
     switch (size) {
@@ -86,11 +77,9 @@ export class ReadDataViewStream extends StreamPosition {
     return 0
   }
   readUInt8(): number {
-    const { offset, dataView } = this
-    this.offset += 1
-    return dataView.getUint8(offset)
+    return Number(this.readUInt(1))
   }
-  readUInt<S extends number>(size: S): number | BigInt {
+  readUInt<S extends number>(size: S): number | bigint {
     const { offset, dataView, le } = this
     this.offset += size
     switch (size) {
