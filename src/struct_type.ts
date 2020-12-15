@@ -70,7 +70,7 @@ type NativeTokenCharTypeMap = {
   P: bigint
 }
 
-type TokenType = StandardTokenCharTypeMap[FormatChar]
+export type TokenType = StandardTokenCharTypeMap[FormatChar]
 
 type Digit = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
 type Char = Digit | FormatChar
