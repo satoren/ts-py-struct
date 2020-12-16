@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - release
 jobs:
   release:
     name: Release
@@ -13,7 +12,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          persist-credentials: false
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
