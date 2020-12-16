@@ -35,12 +35,12 @@ export const unpacker = <T extends string>(format: T): UnPacker<T> => {
       return ret
     }
     const readString = (t: Token) => {
-      const buffer = new Uint8Array(t.count)
-      const dv = new DataView(buffer.buffer)
+      const wb = new Uint8Array(t.count)
+      const dv = new DataView(wb.buffer)
       for (let i = 0; i < t.count; i++) {
         dv.setUint8(i, stream.readUInt8())
       }
-      return [buffer]
+      return [wb]
     }
 
     const readSInt = (t: Token) => {

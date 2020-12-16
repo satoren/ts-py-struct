@@ -52,6 +52,41 @@ export const packer = <T extends string>(format: T): Packer<T> => {
         stream.writeUInt8(v[i] || 0)
       }
     }
+    const checkSIntRange = (
+      value: number | bigint,
+      size: number,
+      token: string
+    ) => {
+      switch (size) {
+        case 1:
+          if (-128 > value || value > 127) {
+            throw Error(`'${token}' format requires -128 <= number <= 127`)
+          }
+          break
+        case 2:
+          if (-32768 > value || value > 32767) {
+            throw Error(`'${token}' format requires -32768 <= number <= 32767`)
+          }
+          break
+        case 4:
+          if (-2147483648 > value || value > 2147483647) {
+            throw Error(
+              `'${token}' format requires -2147483648 <= number <= 2147483647`
+            )
+          }
+          break
+        case 8:
+          if (
+            BigInt('-9223372036854775808') > value ||
+            value > BigInt('9223372036854775807')
+          ) {
+            throw Error(
+              `'${token}' format requires -9223372036854775808 <= number <= 9223372036854775807`
+            )
+          }
+          break
+      }
+    }
     const writeSInt = (t: Token): void => {
       const size = sizeMap[t.token]
       if (f.native) {
@@ -62,7 +97,38 @@ export const packer = <T extends string>(format: T): Packer<T> => {
         if (typeof v !== 'number' && typeof v !== 'bigint') {
           throw Error('Invalid Argument type')
         }
+        checkSIntRange(v, size, t.token)
         stream.writeSInt(v, size)
+      }
+    }
+    const checkUIntRange = (
+      value: number | bigint,
+      size: number,
+      token: string
+    ) => {
+      switch (size) {
+        case 1:
+          if (0 > value || value > 255) {
+            throw Error(`'${token}' format requires 0 <= number <= 255`)
+          }
+          break
+        case 2:
+          if (0 > value || value > 65535) {
+            throw Error(`'${token}' format requires 0 <= number <= 65535`)
+          }
+          break
+        case 4:
+          if (0 > value || value > 4294967295) {
+            throw Error(`'${token}' format requires 0 <= number <= 4294967295`)
+          }
+          break
+        case 8:
+          if (0 > value || value > BigInt('18446744073709551615')) {
+            throw Error(
+              `'${token}' format requires 0 <= number <= 18446744073709551615`
+            )
+          }
+          break
       }
     }
     const writeUInt = (t: Token): void => {
@@ -75,6 +141,7 @@ export const packer = <T extends string>(format: T): Packer<T> => {
         if (typeof v !== 'number' && typeof v !== 'bigint') {
           throw Error('Invalid Argument')
         }
+        checkUIntRange(v, size, t.token)
         stream.writeUInt(v, size)
       }
     }
