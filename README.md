@@ -9,8 +9,10 @@ port python's struct to typescript.
 
 ## Feature
 
+- https://docs.python.org/3/library/struct.html
 - Infer the arguments of pack and the return value of unpack from the format.
 - Native size (`@`) same to LP64
+- Omit 'p' format
 
 ## Usage
 

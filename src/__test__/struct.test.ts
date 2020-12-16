@@ -374,6 +374,60 @@ test.each(unpackTestData)('eq unpack compare with python(%s)', (f, arg) => {
   expect(unpacked).toStrictEqual(arg)
 })
 
+const alignCheckTestData = [
+  ['<b', [127]],
+  ['<b', [-128]],
+  ['<B', [255]],
+  ['<B', [0]],
+  ['<h', [32767]],
+  ['<h', [-32768]],
+  ['<H', [65535]],
+  ['<H', [0]],
+  ['<i', [2147483647]],
+  ['<i', [-2147483648]],
+  ['<I', [4294967295]],
+  ['<I', [0]],
+  ['<l', [2147483647]],
+  ['<l', [-2147483648]],
+  ['<L', [4294967295]],
+  ['<L', [0]],
+  ['<q', [BigInt('9223372036854775807')]],
+  ['<q', [BigInt('-9223372036854775808')]],
+  ['<Q', [BigInt('18446744073709551615')]],
+  ['<Q', [BigInt(0)]],
+] as const
+
+test.each(alignCheckTestData)('align check%s %s', (f, v) => {
+  expect(unpack(f, pack(f as string, v[0]))).toStrictEqual(v)
+})
+
+const OOLTestData = [
+  ['<b', [127 + 1]],
+  ['<b', [-128 - 1]],
+  ['<B', [255 + 1]],
+  ['<B', [0 - 1]],
+  ['<h', [32767 + 1]],
+  ['<h', [-32768 - 1]],
+  ['<H', [65535 + 1]],
+  ['<H', [0 - 1]],
+  ['<i', [2147483647 + 1]],
+  ['<i', [-2147483648 - 1]],
+  ['<I', [4294967295 + 1]],
+  ['<I', [0 - 1]],
+  ['<l', [2147483647 + 1]],
+  ['<l', [-2147483648 - 1]],
+  ['<L', [4294967295 + 1]],
+  ['<L', [0 - 1]],
+  ['<q', [BigInt('9223372036854775807') + BigInt(1)]],
+  ['<q', [BigInt('-9223372036854775808') - BigInt(1)]],
+  ['<Q', [BigInt('18446744073709551615') + BigInt(1)]],
+  ['<Q', [BigInt(0) - BigInt(1)]],
+] as const
+
+test.each(OOLTestData)('out of range(%s, %s)', (f, v) => {
+  expect(() => pack(f, ...v)).toThrowError()
+})
+
 test('pack_into/unpack_from', () => {
   const buffer = new Uint8Array(10)
   const format = '2c'
@@ -394,7 +448,7 @@ describe('class interface', () => {
       BigInt(320032),
     ] as const
     const packed = s.pack(...packValues)
-    const unpacked = s.unpack(packed)
+    const unpacked: [bigint, bigint, bigint, bigint] = s.unpack(packed)
     expect(unpacked[0]).toBe(packValues[0])
     expect(unpacked[1]).toBe(packValues[1])
     expect(unpacked[2]).toBe(packValues[2])
@@ -404,7 +458,7 @@ describe('class interface', () => {
     const s = new Struct('2c')
     const packValues = ['A', '0'] as const
     const packed = s.pack(...packValues)
-    const unpacked = s.unpack(packed)
+    const unpacked: [string, string] = s.unpack(packed)
     expect(unpacked[0]).toBe(packValues[0])
     expect(unpacked[1]).toBe(packValues[1])
   })
