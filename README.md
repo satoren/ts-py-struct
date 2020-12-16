@@ -1,7 +1,16 @@
 ![CI](https://github.com/satoren/ts-py-struct/workflows/CI/badge.svg)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea8562a4339243b68d9a3143db29fd4f)](https://app.codacy.com/gh/satoren/ts-py-struct?utm_source=github.com&utm_medium=referral&utm_content=satoren/ts-py-struct&utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/satoren/ts-py-struct/badge.svg?branch=main)](https://coveralls.io/github/satoren/ts-py-struct?branch=main)
 [![npm version](https://badge.fury.io/js/ts-py-struct.svg)](https://badge.fury.io/js/ts-py-struct)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=coverage)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=bugs)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=code_smells)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=security_rating)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=sqale_index)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=satoren_ts-py-struct&metric=ncloc)](https://sonarcloud.io/dashboard?id=satoren_ts-py-struct)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ea8562a4339243b68d9a3143db29fd4f)](https://app.codacy.com/gh/satoren/ts-py-struct?utm_source=github.com&utm_medium=referral&utm_content=satoren/ts-py-struct&utm_campaign=Badge_Grade)
 
 # ts-py-struct
 
