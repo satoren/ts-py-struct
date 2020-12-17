@@ -1,11 +1,4 @@
-import {
-  calcsize,
-  pack,
-  unpack,
-  pack_into,
-  unpack_from,
-  Struct,
-} from '../struct'
+import { calcsize, pack, unpack, pack_into, unpack_from, Struct } from '../'
 import { execSync } from 'child_process'
 
 /*
@@ -341,8 +334,13 @@ const unpackTestData: [string, any[]][] = [
   ['2h2H', [-3432, 31320, 334, 65535]],
   ['2i2I', [-2121213, 2121213, 321232, 42947294]],
   ['2l2L', [-2121213, 2121213, 321232, 32123232]],
+  [
+    '2q2Q',
+    [BigInt(-2121213), BigInt(2121213), BigInt(321232), BigInt(32123232)],
+  ],
   ['2f2d', [-321321.3125, 321321.3125, -321432434321.3125, 321432434321.3125]],
   ['llh0lh', [-789, 456, 123, 321]],
+  ['llh0fh', [-789, 456, 123, 321]],
   [
     '33x2fx2d3x',
     [-321321.3125, 321321.3125, -321432434321.3212, 321432434321.3212],
@@ -370,6 +368,15 @@ test.each(unpackTestData)('neto unpack compare with python(%s)', (f, arg) => {
 })
 test.each(unpackTestData)('eq unpack compare with python(%s)', (f, arg) => {
   const format = `=${f}`
+  const unpacked = unpack(format, pack(format, ...arg))
+  expect(unpacked).toStrictEqual(arg)
+})
+test.each(unpackTestData)('eq unpack compare with python(%s)', (f, arg) => {
+  const format = `${f}`
+  // Skip l and L because that is bigint
+  if (format.includes('l') || format.includes('L')) {
+    return
+  }
   const unpacked = unpack(format, pack(format, ...arg))
   expect(unpacked).toStrictEqual(arg)
 })
@@ -470,5 +477,9 @@ describe('class interface', () => {
     const unpacked = s.unpack_from(buffer, 8)
     expect(unpacked[0]).toBe(packValues[0])
     expect(unpacked[1]).toBe(packValues[1])
+
+    expect(() => s.pack_into(buffer, 10, ...packValues)).toThrowError(
+      'Not enough buffer.'
+    )
   })
 })
