@@ -1,4 +1,11 @@
-import { calcsize, pack, unpack, pack_into, unpack_from, Struct } from '../'
+import struct, {
+  calcsize,
+  pack,
+  unpack,
+  pack_into,
+  unpack_from,
+  Struct,
+} from '../'
 import { execSync } from 'child_process'
 
 /*
@@ -451,6 +458,17 @@ test('pack string with 0 fill', () => {
   )
 
   expect(pack(format, packValues)).toStrictEqual(
+    Uint8Array.from([49, 50, 51, 52, 53, 54, 0, 0, 0, 0])
+  )
+})
+
+test('default export', () => {
+  const format = '10s'
+  const packValues = Uint8Array.from(
+    '123456'.split('').map((c) => c.charCodeAt(0))
+  )
+
+  expect(struct.pack(format, packValues)).toStrictEqual(
     Uint8Array.from([49, 50, 51, 52, 53, 54, 0, 0, 0, 0])
   )
 })

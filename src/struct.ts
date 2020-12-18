@@ -77,3 +77,5 @@ export class Struct<T extends string> {
     return this.unpacker(buffer, offset)
   }
 }
+
+export default { pack, pack_into, unpack, unpack_from, calcsize }
