@@ -1,8 +1,27 @@
 {
   "name": "ts-py-struct",
   "version": "0.0.5",
-  "description": "",
+  "description": "port python's struct to typescript.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "directories": {
+    "lib": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satoren/ts-py-struct.git",
+    "directory": "packages/highlevel"
+  },
+  "bugs": {
+    "url": "https://github.com/satoren/ts-py-struct/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "pack",
+    "unpack"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
@@ -16,7 +35,7 @@
     "clean": "rm -Rf ./dist",
     "prepack": "run-s clean build"
   },
-  "author": "",
+  "author": "satoren <satoreyo@hotmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@semantic-release/git": "^9.0.0",
