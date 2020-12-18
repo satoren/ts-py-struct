@@ -60,3 +60,4 @@ class Struct {
     }
 }
 exports.Struct = Struct;
+exports.default = { pack: exports.pack, pack_into: exports.pack_into, unpack: exports.unpack, unpack_from: exports.unpack_from, calcsize: exports.calcsize };

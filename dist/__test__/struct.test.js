@@ -1,6 +1,25 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const struct_1 = require("../struct");
+const __1 = __importStar(require("../"));
 const child_process_1 = require("child_process");
 /*
 
@@ -157,7 +176,7 @@ const calcsizeTestData = [
 ];
 test.each(calcsizeTestData)('calcsize compare with python(%s)', (f) => {
     const stdout = child_process_1.execSync(`python -c "import struct; print(struct.calcsize('${f}'))"`);
-    expect(struct_1.calcsize(f)).toBe(Number(stdout.toString('utf-8').trim()));
+    expect(__1.calcsize(f)).toBe(Number(stdout.toString('utf-8').trim()));
 });
 const toArray = (outtext) => {
     const a = [];
@@ -171,13 +190,13 @@ test('pack compare with python be', () => {
     const format = '>hhl';
     const stdout = child_process_1.execSync(`python -c "import struct; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}', 1, 2, 3)))"`);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, 1, 2, 3)).toStrictEqual(a);
+    expect(__1.pack(format, 1, 2, 3)).toStrictEqual(a);
 });
 test('pack compare with python with native', () => {
     const format = 'hhl';
     const stdout = child_process_1.execSync(`python -c "import struct; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}', 1, 2, 3)))"`);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, 1, 2, BigInt(3))).toStrictEqual(a);
+    expect(__1.pack(format, 1, 2, BigInt(3))).toStrictEqual(a);
 });
 const toPythonArgString = (...args) => {
     return args
@@ -241,42 +260,42 @@ test.each(packTestData)('native pack compare with python(%s)', (f, arg) => {
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${f}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(f, ...arg)).toStrictEqual(a);
+    expect(__1.pack(f, ...arg)).toStrictEqual(a);
 });
 test.each(packTestData)('be pack compare with python(%s)', (f, arg) => {
     const format = `>${f}`;
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 test.each(packTestData)('le pack compare with python(%s)', (f, arg) => {
     const format = `<${f}`;
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 test.each(packTestData)('eq pack compare with python(%s)', (f, arg) => {
     const format = `=${f}`;
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 test.each(packTestData)('nw pack compare with python(%s)', (f, arg) => {
     const format = `!${f}`;
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 test.each(packTestData)('@native pack compare with python(%s)', (f, arg) => {
     const format = `@${f}`;
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 test('native only pack compare with python', () => {
     const format = 'P';
@@ -284,7 +303,7 @@ test('native only pack compare with python', () => {
     const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(...arg)})))"`;
     const stdout = child_process_1.execSync(cmd);
     const a = toArray(stdout.toString('utf-8').trim());
-    expect(struct_1.pack(format, ...arg)).toStrictEqual(a);
+    expect(__1.pack(format, ...arg)).toStrictEqual(a);
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const unpackTestData = [
@@ -299,8 +318,13 @@ const unpackTestData = [
     ['2h2H', [-3432, 31320, 334, 65535]],
     ['2i2I', [-2121213, 2121213, 321232, 42947294]],
     ['2l2L', [-2121213, 2121213, 321232, 32123232]],
+    [
+        '2q2Q',
+        [BigInt(-2121213), BigInt(2121213), BigInt(321232), BigInt(32123232)],
+    ],
     ['2f2d', [-321321.3125, 321321.3125, -321432434321.3125, 321432434321.3125]],
     ['llh0lh', [-789, 456, 123, 321]],
+    ['llh0fh', [-789, 456, 123, 321]],
     [
         '33x2fx2d3x',
         [-321321.3125, 321321.3125, -321432434321.3212, 321432434321.3212],
@@ -313,22 +337,31 @@ const unpackTestData = [
 ];
 test.each(unpackTestData)('le unpack compare with python(%s)', (f, arg) => {
     const format = `<${f}`;
-    const unpacked = struct_1.unpack(format, struct_1.pack(format, ...arg));
+    const unpacked = __1.unpack(format, __1.pack(format, ...arg));
     expect(unpacked).toStrictEqual(arg);
 });
 test.each(unpackTestData)('be unpack compare with python(%s)', (f, arg) => {
     const format = `>${f}`;
-    const unpacked = struct_1.unpack(format, struct_1.pack(format, ...arg));
+    const unpacked = __1.unpack(format, __1.pack(format, ...arg));
     expect(unpacked).toStrictEqual(arg);
 });
 test.each(unpackTestData)('neto unpack compare with python(%s)', (f, arg) => {
     const format = `!${f}`;
-    const unpacked = struct_1.unpack(format, struct_1.pack(format, ...arg));
+    const unpacked = __1.unpack(format, __1.pack(format, ...arg));
     expect(unpacked).toStrictEqual(arg);
 });
 test.each(unpackTestData)('eq unpack compare with python(%s)', (f, arg) => {
     const format = `=${f}`;
-    const unpacked = struct_1.unpack(format, struct_1.pack(format, ...arg));
+    const unpacked = __1.unpack(format, __1.pack(format, ...arg));
+    expect(unpacked).toStrictEqual(arg);
+});
+test.each(unpackTestData)('eq unpack compare with python(%s)', (f, arg) => {
+    const format = `${f}`;
+    // Skip l and L because that is bigint
+    if (format.includes('l') || format.includes('L')) {
+        return;
+    }
+    const unpacked = __1.unpack(format, __1.pack(format, ...arg));
     expect(unpacked).toStrictEqual(arg);
 });
 const alignCheckTestData = [
@@ -354,7 +387,7 @@ const alignCheckTestData = [
     ['<Q', [BigInt(0)]],
 ];
 test.each(alignCheckTestData)('align check%s %s', (f, v) => {
-    expect(struct_1.unpack(f, struct_1.pack(f, v[0]))).toStrictEqual(v);
+    expect(__1.unpack(f, __1.pack(f, v[0]))).toStrictEqual(v);
 });
 const OOLTestData = [
     ['<b', [127 + 1]],
@@ -379,20 +412,30 @@ const OOLTestData = [
     ['<Q', [BigInt(0) - BigInt(1)]],
 ];
 test.each(OOLTestData)('out of range(%s, %s)', (f, v) => {
-    expect(() => struct_1.pack(f, ...v)).toThrowError();
+    expect(() => __1.pack(f, ...v)).toThrowError();
 });
 test('pack_into/unpack_from', () => {
     const buffer = new Uint8Array(10);
     const format = '2c';
     const packValues = ['A', '0'];
-    struct_1.pack_into(format, buffer, 8, ...packValues);
-    const unpacked = struct_1.unpack_from(format, buffer, 8);
+    __1.pack_into(format, buffer, 8, ...packValues);
+    const unpacked = __1.unpack_from(format, buffer, 8);
     expect(unpacked[0]).toBe(packValues[0]);
     expect(unpacked[1]).toBe(packValues[1]);
 });
+test('pack string with 0 fill', () => {
+    const format = '10s';
+    const packValues = Uint8Array.from('123456'.split('').map((c) => c.charCodeAt(0)));
+    expect(__1.pack(format, packValues)).toStrictEqual(Uint8Array.from([49, 50, 51, 52, 53, 54, 0, 0, 0, 0]));
+});
+test('default export', () => {
+    const format = '10s';
+    const packValues = Uint8Array.from('123456'.split('').map((c) => c.charCodeAt(0)));
+    expect(__1.default.pack(format, packValues)).toStrictEqual(Uint8Array.from([49, 50, 51, 52, 53, 54, 0, 0, 0, 0]));
+});
 describe('class interface', () => {
     test('BigInt', () => {
-        const s = new struct_1.Struct('2Q2q');
+        const s = new __1.Struct('2Q2q');
         const packValues = [
             BigInt(23),
             BigInt(320032),
@@ -407,7 +450,7 @@ describe('class interface', () => {
         expect(unpacked[3]).toBe(packValues[3]);
     });
     test('c', () => {
-        const s = new struct_1.Struct('2c');
+        const s = new __1.Struct('2c');
         const packValues = ['A', '0'];
         const packed = s.pack(...packValues);
         const unpacked = s.unpack(packed);
@@ -416,11 +459,12 @@ describe('class interface', () => {
     });
     test('pack_into/unpack_from', () => {
         const buffer = new Uint8Array(10);
-        const s = new struct_1.Struct('2c');
+        const s = new __1.Struct('2c');
         const packValues = ['A', '0'];
         s.pack_into(buffer, 8, ...packValues);
         const unpacked = s.unpack_from(buffer, 8);
         expect(unpacked[0]).toBe(packValues[0]);
         expect(unpacked[1]).toBe(packValues[1]);
+        expect(() => s.pack_into(buffer, 10, ...packValues)).toThrowError('Not enough buffer.');
     });
 });
