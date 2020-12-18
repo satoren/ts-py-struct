@@ -3,3 +3,6 @@ __test__
 coverage
 .github
 .vscode
+jest.config.js
+.prettier*
+.eslint*
