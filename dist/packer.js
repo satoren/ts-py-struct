@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.packer = void 0;
 const format_1 = require("./format");
 const stream_1 = require("./stream");
+const textencode_1 = require("./textencode");
 const packer = (format) => {
     const f = format_1.formatOrder(format);
     const tokens = format_1.splitTokens(format);
@@ -37,11 +38,12 @@ const packer = (format) => {
         };
         const writeString = (t) => {
             const v = args.shift();
-            if (!(v instanceof Uint8Array)) {
+            const b = (typeof v === 'string' ? textencode_1.textencode(v) : v);
+            if (b.length === undefined) {
                 throw Error('Invalid Argument type');
             }
             for (let i = 0; i < t.count; i++) {
-                stream.writeUInt8(v[i] || 0);
+                stream.writeUInt8(b[i] || 0);
             }
         };
         const checkSIntRange = (value, size, token) => {
