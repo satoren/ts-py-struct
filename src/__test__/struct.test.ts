@@ -473,6 +473,35 @@ test('default export', () => {
   )
 })
 
+test('pack with string', () => {
+  expect(struct.pack('6s', '123456')).toStrictEqual(
+    Uint8Array.from([49, 50, 51, 52, 53, 54])
+  )
+  expect(struct.pack('4s', '💩')).toStrictEqual(
+    Uint8Array.from([0xf0, 0x9f, 0x92, 0xa9])
+  )
+
+  expect(struct.pack('2s', '¥')).toStrictEqual(Uint8Array.from([0xc2, 0xa5]))
+
+  expect(struct.pack('3s', 'あ')).toStrictEqual(
+    Uint8Array.from([0xe3, 0x81, 0x82])
+  )
+  expect(struct.pack('3s', 'あ')).toStrictEqual(
+    Uint8Array.from([0xe3, 0x81, 0x82])
+  )
+  expect(struct.pack('5s', '𠮷')).toStrictEqual(
+    Uint8Array.from([0xf0, 0xa0, 0xae, 0xb7, 0])
+  )
+})
+test('pack with invalid string', () => {
+  expect(struct.pack('6s', String.fromCharCode(0xd801))).toStrictEqual(
+    Uint8Array.from([0xef, 0xbf, 0xbd, 0, 0, 0])
+  )
+  expect(struct.pack('6s', String.fromCharCode(0xd801, 0xdb00))).toStrictEqual(
+    Uint8Array.from([0xef, 0xbf, 0xbd, 0xef, 0xbf, 0xbd])
+  )
+})
+
 describe('class interface', () => {
   test('BigInt', () => {
     const s = new Struct('2Q2q')
