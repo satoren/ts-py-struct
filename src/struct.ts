@@ -1,4 +1,4 @@
-import { FormatTokenTuple } from './struct_type'
+import { FormatTokenTuple, FormatTokenTupleForWrite } from './struct_type'
 import { splitTokens, formatOrder } from './format'
 
 import { packer, Packer } from './packer'
@@ -6,7 +6,7 @@ import { unpacker, UnPacker } from './unpacker'
 
 export const pack = <T extends string>(
   format: T,
-  ...args: FormatTokenTuple<T>
+  ...args: FormatTokenTupleForWrite<T>
 ): Uint8Array => {
   const size = calcsize(format)
   const buffer = new Uint8Array(size)
@@ -17,7 +17,7 @@ export const pack_into = <T extends string>(
   format: T,
   buffer: Uint8Array,
   offset: number,
-  ...args: FormatTokenTuple<T>
+  ...args: FormatTokenTupleForWrite<T>
 ): void => {
   packer(format)(buffer, offset, ...args)
 }
@@ -54,7 +54,7 @@ export class Struct<T extends string> {
     this.packer = packer(format)
     this.unpacker = unpacker(format)
   }
-  pack(...arg: FormatTokenTuple<T>): Uint8Array {
+  pack(...arg: FormatTokenTupleForWrite<T>): Uint8Array {
     const buffer = new Uint8Array(this.size)
     this.packer(buffer, 0, ...arg)
     return buffer
@@ -62,7 +62,7 @@ export class Struct<T extends string> {
   pack_into(
     buffer: Uint8Array,
     offset: number,
-    ...arg: FormatTokenTuple<T>
+    ...arg: FormatTokenTupleForWrite<T>
   ): void {
     if (buffer.length - offset < this.size) {
       throw Error('Not enough buffer.')

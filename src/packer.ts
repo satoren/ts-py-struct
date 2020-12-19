@@ -1,11 +1,12 @@
-import { FormatTokenTuple } from './struct_type'
+import { FormatTokenTupleForWrite } from './struct_type'
 import { splitTokens, formatOrder, Token } from './format'
 import { WriteDataViewStream } from './stream'
+import { textencode } from './textencode'
 
 export type Packer<T extends string> = (
   buffer: Uint8Array,
   offset: number,
-  ...args: FormatTokenTuple<T>
+  ...args: FormatTokenTupleForWrite<T>
 ) => void
 export const packer = <T extends string>(format: T): Packer<T> => {
   const f = formatOrder(format)
@@ -14,7 +15,7 @@ export const packer = <T extends string>(format: T): Packer<T> => {
   return (
     buffer: Uint8Array,
     bufferOffset: number,
-    ...args: FormatTokenTuple<T>
+    ...args: FormatTokenTupleForWrite<T>
   ) => {
     const stream = new WriteDataViewStream(buffer, bufferOffset, f.le)
 
@@ -45,11 +46,12 @@ export const packer = <T extends string>(format: T): Packer<T> => {
     }
     const writeString = (t: Token): void => {
       const v = args.shift()
-      if (!(v instanceof Uint8Array)) {
+      const b = (typeof v === 'string' ? textencode(v) : v) as ArrayLike<number>
+      if (b.length === undefined) {
         throw Error('Invalid Argument type')
       }
       for (let i = 0; i < t.count; i++) {
-        stream.writeUInt8(v[i] || 0)
+        stream.writeUInt8(b[i] || 0)
       }
     }
     const checkSIntRange = (

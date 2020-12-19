@@ -9,7 +9,7 @@ test('typecheck', () => {
 
 test('@2c', () => {
   const st = new Struct('@2c')
-  const v = st.unpack(st.pack('s', 'v'))
+  const v: [string, string] = st.unpack(st.pack('s', 'v'))
   expect(v).toStrictEqual(['s', 'v'])
 })
 test('@2l', () => {
