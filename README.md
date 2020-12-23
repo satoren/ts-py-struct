@@ -19,9 +19,14 @@ port python's struct to typescript.
 ## Feature
 
 -   <https://docs.python.org/3/library/struct.html>
--   Infer the arguments of pack and the return value of unpack from the format.
+-   Infer the arguments type of pack and the return value type of unpack from the format.
 -   Native size (`@`) same to LP64
 -   Omit 'p' format
+-   's' format with string: encode with utf-8
+
+## Requirements
+
+-   Typescript 4.1.x or later
 
 ## Usage
 
