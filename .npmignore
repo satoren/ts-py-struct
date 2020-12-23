@@ -1,5 +1,5 @@
 src
-__test__
+__tests__
 coverage
 .github
 .vscode
