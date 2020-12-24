@@ -34,7 +34,7 @@
     "fix:prettier": "yarn lint:prettier --write",
     "test-ci": "jest --coverage",
     "clean": "rm -Rf ./dist",
-    "prepack": "run-s clean build"
+    "prepack": "run-s clean bundle"
   },
   "author": "satoren <satoreyo@hotmail.com>",
   "license": "ISC",
