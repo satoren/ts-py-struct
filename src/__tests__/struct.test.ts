@@ -170,6 +170,9 @@ test.each(calcsizeTestData)('calcsize compare with python(%s)', (f) => {
   expect(calcsize(f)).toBe(Number(stdout.toString('utf-8').trim()))
 })
 
+const pythonStructCommand = (packarg: string) =>
+  `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(c) for c in bytearray(struct.pack(${packarg}))))"`
+
 const toArray = (outtext: string): Uint8Array => {
   const a = []
   for (let i = 0; i < outtext.length; i += 3) {
@@ -180,18 +183,14 @@ const toArray = (outtext: string): Uint8Array => {
 }
 test('pack compare with python be', () => {
   const format = '>hhl'
-  const stdout = execSync(
-    `python -c "import struct; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}', 1, 2, 3)))"`
-  )
+  const stdout = execSync(pythonStructCommand(`'${format}', 1, 2, 3`))
 
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, 1, 2, 3)).toStrictEqual(a)
 })
 test('pack compare with python with native', () => {
   const format = 'hhl'
-  const stdout = execSync(
-    `python -c "import struct; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}', 1, 2, 3)))"`
-  )
+  const stdout = execSync(pythonStructCommand(`'${format}', 1, 2, 3`))
 
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, 1, 2, BigInt(3))).toStrictEqual(a)
@@ -207,7 +206,7 @@ const toPythonArgString = (...args: PackableType[]): string => {
         return `${a}`
       }
       if (typeof a === 'string') {
-        return `'${a}'`
+        return `'${a}'.encode('utf-8')`
       }
       if (typeof a === 'bigint') {
         return `${a}`
@@ -261,9 +260,7 @@ const packTestData: [string, any[]][] = [
   ['2c', ['a', 'Z']],
 ]
 test.each(packTestData)('native pack compare with python(%s)', (f, arg) => {
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${f}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${f}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(f, ...arg)).toStrictEqual(a)
@@ -271,9 +268,7 @@ test.each(packTestData)('native pack compare with python(%s)', (f, arg) => {
 
 test.each(packTestData)('be pack compare with python(%s)', (f, arg) => {
   const format = `>${f}`
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
@@ -281,9 +276,7 @@ test.each(packTestData)('be pack compare with python(%s)', (f, arg) => {
 
 test.each(packTestData)('le pack compare with python(%s)', (f, arg) => {
   const format = `<${f}`
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
@@ -291,27 +284,21 @@ test.each(packTestData)('le pack compare with python(%s)', (f, arg) => {
 
 test.each(packTestData)('eq pack compare with python(%s)', (f, arg) => {
   const format = `=${f}`
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
 })
 test.each(packTestData)('nw pack compare with python(%s)', (f, arg) => {
   const format = `!${f}`
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
 })
 test.each(packTestData)('@native pack compare with python(%s)', (f, arg) => {
   const format = `@${f}`
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
@@ -320,9 +307,7 @@ test.each(packTestData)('@native pack compare with python(%s)', (f, arg) => {
 test('native only pack compare with python', () => {
   const format = 'P'
   const arg = [BigInt(4431)] as const
-  const cmd = `python -c "import struct;import binascii; print(''.join(r'x{0:02x}'.format(ord(c)) for c in struct.pack('${format}',${toPythonArgString(
-    ...arg
-  )})))"`
+  const cmd = pythonStructCommand(`'${format}',${toPythonArgString(...arg)}`)
   const stdout = execSync(cmd)
   const a = toArray(stdout.toString('utf-8').trim())
   expect(pack(format, ...arg)).toStrictEqual(a)
